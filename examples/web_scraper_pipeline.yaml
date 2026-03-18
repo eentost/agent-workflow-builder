@@ -1,0 +1,43 @@
+# Example: Web Scraper Pipeline
+# A sequential workflow that scrapes a website, processes the data, and sends notifications
+
+name: web-scraper-pipeline
+workflow_type: sequential
+version: "1.0.0"
+description: "Scrapes target website, processes extracted data, and sends Telegram notification"
+
+steps:
+  - name: fetcher
+    type: web_automation
+    description: "Fetch and scrape target website"
+    config:
+      target_url: "https://example.com"
+      depth: 2
+      user_agent: "Mozilla/5.0"
+      timeout: 60
+      
+  - name: processor
+    type: data_processing
+    description: "Clean and transform scraped data"
+    config:
+      input_format: "json"
+      output_format: "csv"
+      transform_rules:
+        - remove_duplicates: true
+        - normalize_dates: true
+        
+  - name: api_sync
+    type: api_integration
+    description: "Sync processed data to external API"
+    config:
+      endpoint: "https://api.example.com/data"
+      method: "POST"
+      batch_size: 100
+      
+  - name: notifier
+    type: telegram_bot
+    description: "Send completion notification"
+    config:
+      message_template: "Pipeline completed. Processed {count} records."
+      on_failure: true
+      on_success: true
