@@ -1,0 +1,54 @@
+# LLM Agent Pipeline Example
+# Use large language models for various tasks
+
+name: llm_agent_pipeline
+version: "1.0"
+description: LLM-based text analysis and content generation pipeline
+
+agents:
+  - name: text_analyzer
+    type: llm_agent
+    config:
+      model: gpt-4
+      task: text_analysis
+      input_source: ./data/input.txt
+      prompts:
+        - "Analyze the sentiment of the following text."
+        - "Extract key entities from the text."
+        - "Summarize the main points."
+      temperature: 0.7
+      max_tokens: 1000
+      
+  - name: code_reviewer
+    type: llm_agent
+    config:
+      model: claude-3
+      task: code_review
+      input_source: ./src/
+      language: python
+      check_for:
+        - security_issues
+        - code_quality
+        - best_practices
+        
+  - name: content_generator
+    type: llm_agent
+    config:
+      model: gpt-4
+      task: content_generation
+      template: technical_documentation
+      style: professional
+      tone: informative
+
+output:
+  format: markdown
+  path: ./llm_output
+  files:
+    analysis: analysis_report.md
+    review: code_review.md
+    generated: generated_content.md
+
+settings:
+  retry_on_error: true
+  max_retries: 3
+  timeout: 60
