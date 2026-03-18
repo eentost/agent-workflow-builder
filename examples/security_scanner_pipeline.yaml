@@ -1,0 +1,50 @@
+# Security Scanner Pipeline Example
+# Run security scans on your infrastructure
+
+name: security_scanner_pipeline
+version: "1.0"
+description: Comprehensive security scanning pipeline with multiple scan stages
+
+agents:
+  - name: port_scanner
+    type: security_scanner
+    config:
+      scan_type: port_scan
+      target: localhost
+      ports: "1-1000"
+      output: nmap
+      timing: normal
+      
+  - name: vulnerability_scanner
+    type: security_scanner
+    config:
+      scan_type: vuln_scan
+      target: localhost
+      include_cve: true
+      severity_filter:
+        - critical
+        - high
+        - medium
+      
+  - name: web_scanner
+    type: security_scanner
+    config:
+      scan_type: web_scan
+      target: http://localhost:8080
+      check_owasp_top10: true
+      check_headers: true
+      check_ssl: true
+
+output:
+  format: json
+  path: ./security_results
+  reports:
+    - type: summary
+      file: report_summary.json
+    - type: detailed
+      file: report_detailed.json
+
+scheduling:
+  enabled: true
+  cron: "0 2 * * *"
+  timezone: UTC
